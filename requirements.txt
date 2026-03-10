@@ -1,8 +1,6 @@
-pyspark 
+pyspark
 pandas
-request 
-sqlalchemy
-json
-numpy 
+requests
+SQLAlchemy
+numpy
 psycopg2-binary
-datetime
