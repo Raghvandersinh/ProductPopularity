@@ -1,7 +1,11 @@
 import psycopg2
 from dotenv import load_dotenv
-conn = psycopg2.connect(
-    host="localhost",
-    database="FraudTransactions",
-    user="RagoSauce"
-)
+import os 
+from sqlalchemy import create_engine
+load_dotenv()
+
+engine = create_engine(os.getenv("DATABASE_URL"))
+print(engine.url)
+with engine.connect() as connection:
+    result = connection.execute("Select version();")
+    print(result.fetchone())
