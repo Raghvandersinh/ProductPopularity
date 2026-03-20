@@ -1,7 +1,42 @@
-import requests
-import curl
+import requests 
+import json
+from warcio.archiveiterator import ArchiveIterator as ai
+import io
 
-base_url = "https://api.kroger.com/v1/products"
-response = requests.get(base_url, params={"filter.limit": 10})
-print(response)
-print(response.json())
+url = "https://index.commoncrawl.org/collinfo.json"
+print(requests.get(url).status_code)
+# catalog = requests.get(url).json()
+# index = catalog['id']
+
+# endpoint = f"https://index.commoncrawl.org/{latest_index}-index"
+
+# params = {
+#     "url": 'amazon.com',
+#     "output": 'json',
+#     "limit" : 5
+# }
+
+# res = requests.get(endpoint, params=params)
+# print(res)
+
+# records = [json.loads(line) for line in res.text.strip().split('\n')]
+
+# s3_urls = f"https://data.commoncrawl.org/{records[0]['filename']}"
+# offset = int(records[0]['offset'])
+# length = int(records[0]['length'])
+
+# headers = {"Range": f"bytes={offset}-{offset+length-1}"}
+# warc_res = requests.get(s3_urls,headers=headers)
+
+# print(warc_res.status_code)
+
+# stream = io.BytesIO(warc_res.content)
+# encoding =  records[0]['encoding']
+# print(type(encoding))
+# print(f"Encoding: {encoding}, Type: {type(encoding)}")
+
+# for rec in ai(stream):
+#     if rec.rec_type == 'response':
+#         html = rec.content_stream().read().decode(encoding, errors='ignore')
+#         print(html[:500])
+        
