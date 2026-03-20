@@ -2,11 +2,22 @@ import requests
 import json
 from warcio.archiveiterator import ArchiveIterator as ai
 import io
+from time import sleep
 
 url = "https://index.commoncrawl.org/collinfo.json"
-print(requests.get(url).status_code)
-# catalog = requests.get(url).json()
-# index = catalog['id']
+headers = {"User-Agent": "Mozilla/5.0"}
+
+for attempt in range(5):
+    try:
+        response = requests.get(url, headers=headers, timeout = 10)
+        response.raise_for_status()
+        catalog = response.json()
+        all_ids = [c['id'] for c in catalog]
+        print("Collection IDs:", all_ids)
+        break
+    except requests.exceptions.RequestException as e:
+        print(f"Attempts: {attempt + 1} failed {e}")
+        sleep(2)
 
 # endpoint = f"https://index.commoncrawl.org/{latest_index}-index"
 
