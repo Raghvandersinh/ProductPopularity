@@ -1,1 +1,38 @@
-Fraudulent Transaction Project.
+TRI(Toxic Release Inventory) Analysis Of DataCenters:
+
+API table RelationShips through Columns Ids:
+
+1. doc_ctrl_num:
+   1. tri_chem_activity
+   2. tri_onsite_waterstream
+   3. tri_water_stream
+   4. tri_energy_recovery
+   5. tri_form_total
+   6. tri_off_site_transfer_location
+   7. tri_onsite_waste_treatment_met
+   8. tri_potw_location
+   9. tri_recycling_process
+   10. tri_release_qty
+   11. tri_source_reduct_method
+   13. tri_source_reduct_method
+   14. tri_source_reduct_qty
+   16. tri_transfer_qty
+   15. tri_submission_sic
+   12. tri_reporting_form
+   
+2. tri_chem_id
+    1. tri_chem_info
+    2. tri_reporting_form
+
+3. tri_facility_id
+    1. tri_facility_history
+    2. tri_facility_history_2
+    3. tri_facility_npdes
+    4. tri_facility_npdes_history
+    5. tri_facility_rca
+    6. tri_facility_rca_history
+    7. tri_facility_uic
+    8. tri_facility_uic_history
+    10. tri_submission_sic
+    9. tri_reporting_form
+
