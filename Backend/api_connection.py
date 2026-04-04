@@ -39,7 +39,13 @@ def url_filter(program = "tri",table = 'tri_chem_activity/', range = '1:20/', fo
         print("Error: Missing required parameters. Please provide program, table, and range.")
         return None
 
-def get_data(base_url):
+def get_data_json(base_url):
+    """
+    Fetches data from the provided URL and returns it as a JSON object.
+    Keyword arguments:
+    base_url -- the URL to fetch data from
+    """
+    
     try:
         response = requests.get(base_url)
         if response.status_code == 200:
@@ -54,5 +60,5 @@ def get_data(base_url):
 
 base_url = url_filter()
 print(base_url)
-data = get_data(base_url)
+data = get_data_json(base_url)
 print(json.dumps(data, indent=4))

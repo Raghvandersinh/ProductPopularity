@@ -2,3 +2,4 @@ psqlContainer.sh
 .env
 post_create.sh
 screatCode.txt
+Command_List.txt
