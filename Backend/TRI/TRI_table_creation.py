@@ -91,3 +91,18 @@ tri_facility_history=  Table(
     Column('epa_stardard_parent', VARCHAR(50)),
     Column('primary_naics', VARCHAR(10))
 );
+
+tri_form_total = Table(
+    'tri_form_total',
+    mapped_registry.metadata,
+    Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
+    Column('total_air_release', VARCHAR(10)),
+    Column('total_land_release', VARCHAR(10)),
+    Column('total_offsite_release', VARCHAR(10)),
+    Column('total_onsite_release', VARCHAR(10)),
+    Column('total_prod_waste', VARCHAR(10)),
+    Column('total_recovery_transfer', VARCHAR(10)),
+    Column('total_recycle_transfer', VARCHAR(10)),
+    Column('total_water_release', VARCHAR(10)),
+    Column('number_of_streams', VARCHAR(10))
+)
