@@ -1,6 +1,5 @@
 import enum
-from sqlalchemy import create_engine, text ,BOOLEAN, VARCHAR, INTEGER, SMALLINT, Table, Column, Enum
-from sqlalchemy.orm import registry
+from sqlalchemy import create_engine, text, MetaData, BOOLEAN, VARCHAR, INTEGER, Table, Column, Enum
 from dotenv import load_dotenv
 import os
 
@@ -40,11 +39,11 @@ try:
 except Exception as e:
     print(f'connection failed: {e}')
 
-mapped_registry = registry()
+meta = MetaData()
 
 chem_info_table = Table(
     'tri_chem_info',
-    mapped_registry.metadata,
+    meta,
     Column('tri_chem_id', INTEGER, primary_key=True),
     Column('caac_ind',BOOLEAN),
     Column('carc_ind',BOOLEAN),
@@ -60,7 +59,7 @@ chem_info_table = Table(
 
 tri_chem_activity = Table(
     'tri_chem_activity',
-    mapped_registry.metadata,
+    meta,
     Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
     Column('ancillary',BOOLEAN),
     Column('article_component',BOOLEAN),
@@ -81,7 +80,7 @@ tri_chem_activity = Table(
 
 tri_facility_history=  Table(
     'tri_facility_history',
-    mapped_registry.metadata,
+    meta,
     Column('tri_facility_id', VARCHAR(15), primary_key=True),
     Column('facility_name', VARCHAR(30), nullable=False),
     Column('city', VARCHAR(20)),
@@ -94,7 +93,7 @@ tri_facility_history=  Table(
 
 tri_form_total = Table(
     'tri_form_total',
-    mapped_registry.metadata,
+    meta,
     Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
     Column('total_air_release', VARCHAR(10)),
     Column('total_land_release', VARCHAR(10)),
@@ -106,3 +105,7 @@ tri_form_total = Table(
     Column('total_water_release', VARCHAR(10)),
     Column('number_of_streams', VARCHAR(10))
 )
+
+meta.create_all(engine)
+conn = engine.connect()
+
