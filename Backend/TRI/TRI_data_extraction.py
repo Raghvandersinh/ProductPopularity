@@ -3,6 +3,7 @@ import json
 from time import sleep
 from dotenv import load_dotenv
 import os
+import pandas as pd
 load_dotenv(override=True)
 
 
@@ -45,7 +46,6 @@ def get_data_json(base_url, table = None, range = None):
     Keyword arguments:
     base_url -- the URL to fetch data from
     """
-    
     try:
         response = requests.get(base_url)
         if response.status_code == 200:
@@ -57,3 +57,16 @@ def get_data_json(base_url, table = None, range = None):
     except Exception as e:
         print(f"Error has occurred: {e}")
         return None 
+
+def batch_extraction(table = 'tri_chem_info/',start = 1, end = 1000, increment = 1000, loop_count = 0):
+    """
+    Extracts data in batches from the EPA DMP API to avoid hitting rate limits. 
+    """
+    for i in range(loop_count):
+        string_range = f'{start}:{end}'
+        base_url = url_filter(table = table, range=string_range)
+        data = get_data_json(base_url)
+        start += increment
+        end += increment
+        sleep(10) # Sleep for 30 seconds to avoid hitting API rate limits
+
