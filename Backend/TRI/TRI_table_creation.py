@@ -8,11 +8,11 @@ load_dotenv()
 
 class Classifications(enum.Enum):
     # TRI classifications
-    TRI = '0'
+    TRI = 0
     # PBT classifications
-    PBT = '1'
+    PBT = 1
     # Dioxin classifications
-    Dioxin = '2'
+    Dioxin = 2
 
 class Metal_Indicator(enum.Enum):
     # Chemical is NOT a Metal or Metal Compound
@@ -26,12 +26,6 @@ class Metal_Indicator(enum.Enum):
     # Metals with Qualifiers
     Qualified_Metals = '4'
 
-class Measurements(enum.Enum):
-    # Pounds
-    Pounds = 'Pounds'
-    # Grams
-    Grams = 'Grams'
-    
 engine = create_engine(os.getenv('DATABASE_URL'))
 
 try:
@@ -56,7 +50,7 @@ chem_info_table = Table(
     Column('pfas_ind',BOOLEAN),
     Column('r3350_ind',BOOLEAN),
     Column('srs_id', INTEGER),
-    Column('units_of_measure', Enum(Measurements))
+    Column('units_of_measure', VARCHAR(10))
 )
 
 tri_chem_activity = Table(
