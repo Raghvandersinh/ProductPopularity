@@ -13,9 +13,12 @@ def transform_tri_chem_info(raw_data):
     database insertion."
     """
     try:
+        classify = pd.Categorical(["0","1","2"],categories=['TRI','PBT','Dioxin'], ordered=False)
+        metal_ind = pd.Categorical(["0","1","2","3","4"],categories=['Not Metal','Parent Metals','Individually Listed','Barium','Metals with Qualifiers'], ordered=False)
+        units_of_measure = pd.Categorical(['Pounds', 'Grams'],categories=['Pounds', 'Grams'], ordered=False)
         df = pd.DataFrame(raw_data)
         # Convert data types as needed, for example:
-        df['tri_chem_id'] = int(df['tri_chem_id']).astype(int)
+        df['tri_chem_id'] = df['tri_chem_id'].astype(int)
         df = true_false_to_boolean(df, 'caac_ind')
         df = true_false_to_boolean(df, 'carc_ind')
         df = true_false_to_boolean(df, 'feds_ind')
@@ -24,7 +27,7 @@ def transform_tri_chem_info(raw_data):
         df = true_false_to_boolean(df, 'pbt_ind')
         df = true_false_to_boolean(df, 'pfas_ind')
         df = true_false_to_boolean(df, 'r3350_ind')
-        df['srs_id'] = int(df['srs_id']).astype(int)
+        df['srs_id'] = df['srs_id'].astype(int)
         df['units_of_measure'] = df['units_of_measure'].astype('category')
         return df
     

@@ -5,33 +5,35 @@ import os
 
 load_dotenv()
 
-engine = create_engine(os.getenv('DATABASE_URL'))
 
 class Classifications(enum.Enum):
     # TRI classifications
-    zero = 0
+    TRI = '0'
     # PBT classifications
-    one = 1
+    PBT = '1'
     # Dioxin classifications
-    two = 2
+    Dioxin = '2'
 
-class metal_indicator(enum.Enum):
+class Metal_Indicator(enum.Enum):
     # Chemical is NOT a Metal or Metal Compound
-    zero = 0
+    Not_Metal = '0'
     # Parent Metals and Metal Compound Categories
-    one = 1
+    Parent_Metals = '1'
     #  Individually Listed Metal Compounds,
-    two = 2
+    Listed_Metals = '2'
     # Barium and Barium Compounds
-    three = 3 
+    Barium = '3'
     # Metals with Qualifiers
-    four = 4
+    Qualified_Metals = '4'
 
-class mesurements(enum.Enum):
+class Measurements(enum.Enum):
     # Pounds
-    lbs = 'pounds'
+    Pounds = 'Pounds'
     # Grams
-    g = 'grams'
+    Grams = 'Grams'
+    
+engine = create_engine(os.getenv('DATABASE_URL'))
+
 try:
     with engine.connect() as connection:
         connection.execute(text('SELECT 1'))
@@ -49,12 +51,12 @@ chem_info_table = Table(
     Column('carc_ind',BOOLEAN),
     Column('feds_ind',BOOLEAN),
     Column('classify', Enum(Classifications)),
-    Column('metal_ind', Enum(metal_indicator)),
+    Column('metal_ind', Enum(Metal_Indicator)),
     Column('pbt_ind',BOOLEAN),
     Column('pfas_ind',BOOLEAN),
     Column('r3350_ind',BOOLEAN),
     Column('srs_id', INTEGER),
-    Column('units_of_measure', Enum(mesurements))
+    Column('units_of_measure', Enum(Measurements))
 )
 
 tri_chem_activity = Table(
