@@ -40,16 +40,16 @@ meta = MetaData()
 chem_info_table = Table(
     'tri_chem_info',
     meta,
-    Column('tri_chem_id', INTEGER, primary_key=True),
+    Column('tri_chem_id', VARCHAR(15), primary_key=True),
     Column('caac_ind',BOOLEAN),
     Column('carc_ind',BOOLEAN),
     Column('feds_ind',BOOLEAN),
-    Column('classify', Enum(Classifications)),
+    Column('classification', Enum(Classifications)),
     Column('metal_ind', Enum(Metal_Indicator)),
     Column('pbt_ind',BOOLEAN),
     Column('pfas_ind',BOOLEAN),
     Column('r3350_ind',BOOLEAN),
-    Column('srs_id', INTEGER),
+    Column('srs_id', VARCHAR(20)),
     Column('units_of_measure', VARCHAR(10))
 )
 
@@ -61,17 +61,17 @@ tri_chem_activity = Table(
     Column('article_component',BOOLEAN),
     Column('byproduct',BOOLEAN),
     Column('chem_processing_aid',BOOLEAN),
-    Column('formulation_components',BOOLEAN),
+    Column('formulation_component',BOOLEAN),
     Column('imported', BOOLEAN),
     Column('manufacture_aid', BOOLEAN),
     Column('manufacture_impurity' ,BOOLEAN),
     Column('process_impurity' ,BOOLEAN),
-    Column('processed_recycle' ,BOOLEAN),
+    Column('processed_recycling' ,BOOLEAN),
     Column('produce' ,BOOLEAN),
     Column('reactant' ,BOOLEAN),
     Column('repackaging' ,BOOLEAN),
-    Column('sales_distribution' ,BOOLEAN),
-    Column('used_process' ,BOOLEAN)   
+    Column('sale_distribution' ,BOOLEAN),
+    Column('used_processed' ,BOOLEAN)   
 )
 
 tri_facility_history=  Table(
