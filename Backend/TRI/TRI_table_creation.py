@@ -98,7 +98,7 @@ tri_form_total = Table(
     Column('total_onsite_release', VARCHAR(10)),
     Column('total_prod_waste', VARCHAR(10)),
     Column('total_recovery_transfer', VARCHAR(10)),
-    Column('total_recycle_transfer', VARCHAR(10)),
+    Column('total_recycling_transfer', VARCHAR(10)),
     Column('total_water_release', VARCHAR(10)),
     Column('number_of_streams', VARCHAR(10))
 )

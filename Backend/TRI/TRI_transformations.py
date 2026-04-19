@@ -105,7 +105,26 @@ def transform_tri_facility_history(raw_data):
         import traceback; traceback.print_exc();
         return None 
 
-
+def transform_tri_form_total(raw_data):
+    
+    try:
+        df = pd.DataFrame(raw_data)
+        df['doc_ctrl_num'] = df['doc_ctrl_num'].astype(str)
+        df['total_air_release'] = df['total_air_release'].astype(str)
+        df['total_land_release'] = df['total_land_release'].astype(str)
+        df['total_offsite_release'] = df['total_offsite_release'].astype(str)
+        df['total_prod_waste'] = df['total_prod_waste'].astype(str)
+        df['total_recovery_transfer'] = df['total_recovery_transfer'].astype(str)
+        df['total_recycling_transfer'] = df['total_recycling_transfer'].astype(str)
+        df['total_water_release'] = df['total_water_release'].astype(str)
+        df['number_of_streams'] = df['number_of_streams'].astype(str)
+        return df
+    
+    except Exception as e:
+        print(f'Transformation Failed {e}')
+        import traceback; traceback.print_exc();
+        return None
+    
 def tranform_main(table, start, end, loop_count, df):
     
     temp = []
@@ -119,7 +138,7 @@ def tranform_main(table, start, end, loop_count, df):
     
             
 if __name__ == "__main__":
-    tranform_main(table='tri_facility_history_2/', start = 1, end = 5, loop_count=3, df = transform_tri_facility_history)
+    tranform_main(table='tri_form_totals/', start = 1, end = 5, loop_count=1, df = transform_tri_form_total)
             
             
             
