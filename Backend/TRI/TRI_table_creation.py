@@ -78,12 +78,13 @@ tri_facility_history=  Table(
     'tri_facility_history',
     meta,
     Column('tri_facility_id', VARCHAR(15), primary_key=True),
+    Column('parent_name', VARCHAR(20)),
     Column('facility_name', VARCHAR(30), nullable=False),
     Column('city', VARCHAR(20)),
     Column('county', VARCHAR(20)),
     Column('state', VARCHAR(20)),
-    Column('epa_standard_foreign_partent', VARCHAR(50)),
-    Column('epa_stardard_parent', VARCHAR(50)),
+    Column('epa_standardized_foreign_parent', VARCHAR(50)),
+    Column('epa_standardized_parent', VARCHAR(50)),
     Column('primary_naics', VARCHAR(10))
 );
 

@@ -1,6 +1,6 @@
 from TRI_data_extraction import batch_extraction as be
 import pandas as pd 
-
+import numpy as np
 
 def true_false_to_boolean(df, column):
     if df[column].dtype == 'int':
@@ -76,20 +76,50 @@ def transform_tri_chem_activity(raw_data):
         df = true_false_to_boolean(df,column='repackaging')
         df = true_false_to_boolean(df,column='sale_distribution')
         df = true_false_to_boolean(df,column='used_processed')
-    
-        return df
 
+        return df
+    
     except Exception as e:
         print(f"Error has occured during Transformations {e}")
         import traceback; traceback.print_exc();
         return None 
 
+def transform_tri_facility_history(raw_data):
+    try:
+        df = pd.DataFrame(raw_data)
+        df['tri_facility_id'] = df['tri_facility_id'].astype(str)
+        #facility_name in DB
+        df['parent_name'] = df['parent_name'].astype(str)
+        df['name'] = df['name'].astype(str)
+        df['city'] = df['city'].astype(str)
+        df['county'] = df['county'].astype(str)
+        df['state'] = df['state'].astype(str)
+        df['epa_standardized_foreign_parent'] = df['epa_standardized_foreign_parent'].astype(str)
+        df['epa_standardized_parent'] = df['epa_standardized_parent'].astype(str)
+        df['primary_naics'] = df['primary_naics'].astype(str)
+
+        return df
+        
+    except Exception as e:
+        print(f"Error has occured during Transformations {e}")
+        import traceback; traceback.print_exc();
+        return None 
+
+
+def tranform_main(table, start, end, loop_count, df):
+    
+    temp = []
+    for raw_data in be(table = table, start = start, end = end, increment=end, loop_count = loop_count):        
+        temp.append(raw_data)
+    
+    result = [record for batch in temp for record in batch]    
+    df = df(result)
+    if df is not None:
+        print(df.tail())
+    
+            
 if __name__ == "__main__":
-    end = 1000
-    for raw_data in be(table = 'tri_chem_activity/', start = 1, end = end, increment=end, loop_count = 1):        
-        df = transform_tri_chem_activity(raw_data)
-        if df is not None:
-            print(df.tail())
+    tranform_main(table='tri_facility_history_2/', start = 1, end = 5, loop_count=3, df = transform_tri_facility_history)
             
             
             
