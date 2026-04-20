@@ -67,7 +67,6 @@ tri_chem_activity = Table(
     Column('manufacture_aid', BOOLEAN),
     Column('manufacture_impurity' ,BOOLEAN),
     Column('process_impurity' ,BOOLEAN),
-    Column('processed_recycling' ,BOOLEAN),
     Column('produce' ,BOOLEAN),
     Column('reactant' ,BOOLEAN),
     Column('repackaging' ,BOOLEAN),
@@ -92,7 +91,7 @@ tri_facility_history=  Table(
 );
 
 tri_form_total = Table(
-    'tri_form_total',
+    'tri_form_totals',
     meta,
     Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
     Column('total_air_release', VARCHAR(10)),

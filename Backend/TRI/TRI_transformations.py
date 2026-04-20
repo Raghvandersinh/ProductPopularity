@@ -1,6 +1,13 @@
 from TRI_data_extraction import batch_extraction as be
 import pandas as pd 
 import numpy as np
+from sqlalchemy import create_engine
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+engine = create_engine(os.getenv('DATABASE_URL'))
 
 def true_false_to_boolean(df, column):
     if df[column].dtype == 'int':
@@ -70,7 +77,6 @@ def transform_tri_chem_activity(raw_data):
         df = true_false_to_boolean(df,column='manufacture_aid')
         df = true_false_to_boolean(df,column='manufacture_impurity')
         df = true_false_to_boolean(df,column='process_impurity')
-        df = true_false_to_boolean(df,column='processed_recycling')
         df = true_false_to_boolean(df,column='produce')
         df = true_false_to_boolean(df,column='reactant')
         df = true_false_to_boolean(df,column='repackaging')
@@ -125,19 +131,24 @@ def transform_tri_form_total(raw_data):
         import traceback; traceback.print_exc();
         return None
 
-def tranform_main(table, start, end, loop_count, df):
-    temp = []
-    for raw_data in be(table = table, start = start, end = end, increment=end, loop_count = loop_count):        
-        temp.append(raw_data)
-    
-    result = [record for batch in temp for record in batch]    
-    df = df(result)
-    if df is not None:
-        print(df.tail())
-    return df
+def tranform_main(table, start, end, loop_count, df =pd.DataFrame):
+    try:
+        temp = []
+        for raw_data in be(table = table, start = start, end = end, increment=end, loop_count=loop_count):        
+            temp.append(raw_data)
+        
+        result = [record for batch in temp for record in batch]    
+        df = df(result)
+        if df is not None:
+            print(df.tail())
+        df.to_sql(table = table[:-1], con=engine, if_exists='replace')
+        
+    except Exception as e:
+        print(f"Error Occured during Transformation or Insertion{e}")
+        import traceback; traceback.print_exc();
+        
             
 if __name__ == "__main__":
     tranform_main(table='tri_form_totals/', start = 1, end = 5, loop_count=1, df = transform_tri_form_total)
-    print(tranform_main())
             
             
