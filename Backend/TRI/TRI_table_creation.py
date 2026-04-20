@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import create_engine, text, MetaData, BOOLEAN, VARCHAR, INTEGER, Table, Column, Enum
+from sqlalchemy import create_engine, text, MetaData, BOOLEAN, VARCHAR, INTEGER, Table, Column, Enum, UniqueConstraint
 from dotenv import load_dotenv
 import os
 
@@ -50,7 +50,8 @@ chem_info_table = Table(
     Column('pfas_ind',BOOLEAN),
     Column('r3350_ind',BOOLEAN),
     Column('srs_id', VARCHAR(20)),
-    Column('units_of_measure', VARCHAR(10))
+    Column('units_of_measure', VARCHAR(10)),
+    UniqueConstraint('tri_chem_id', 'srs_id')
 )
 
 tri_chem_activity = Table(
@@ -71,7 +72,8 @@ tri_chem_activity = Table(
     Column('reactant' ,BOOLEAN),
     Column('repackaging' ,BOOLEAN),
     Column('sale_distribution' ,BOOLEAN),
-    Column('used_processed' ,BOOLEAN)   
+    Column('used_processed' ,BOOLEAN),
+    UniqueConstraint('doc_ctrl_num')   
 )
 
 tri_facility_history=  Table(
@@ -85,7 +87,8 @@ tri_facility_history=  Table(
     Column('state', VARCHAR(20)),
     Column('epa_standardized_foreign_parent', VARCHAR(50)),
     Column('epa_standardized_parent', VARCHAR(50)),
-    Column('primary_naics', VARCHAR(10))
+    Column('primary_naics', VARCHAR(10)),
+    UniqueConstraint('tri_facility_id')
 );
 
 tri_form_total = Table(
@@ -100,7 +103,8 @@ tri_form_total = Table(
     Column('total_recovery_transfer', VARCHAR(10)),
     Column('total_recycling_transfer', VARCHAR(10)),
     Column('total_water_release', VARCHAR(10)),
-    Column('number_of_streams', VARCHAR(10))
+    Column('number_of_streams', VARCHAR(10)),
+    UniqueConstraint('doc_ctrl_num')
 )
 
 meta.create_all(engine)

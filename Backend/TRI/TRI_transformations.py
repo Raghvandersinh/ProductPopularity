@@ -124,9 +124,8 @@ def transform_tri_form_total(raw_data):
         print(f'Transformation Failed {e}')
         import traceback; traceback.print_exc();
         return None
-    
+
 def tranform_main(table, start, end, loop_count, df):
-    
     temp = []
     for raw_data in be(table = table, start = start, end = end, increment=end, loop_count = loop_count):        
         temp.append(raw_data)
@@ -135,10 +134,10 @@ def tranform_main(table, start, end, loop_count, df):
     df = df(result)
     if df is not None:
         print(df.tail())
-    
+    return df
             
 if __name__ == "__main__":
     tranform_main(table='tri_form_totals/', start = 1, end = 5, loop_count=1, df = transform_tri_form_total)
-            
+    print(tranform_main())
             
             
