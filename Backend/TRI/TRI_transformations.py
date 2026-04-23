@@ -1,14 +1,20 @@
 from TRI_data_extraction import batch_extraction as be
 import pandas as pd 
 import numpy as np
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 import os
-
+from TRI_table_creation import Classifications, Metal_Indicator
 load_dotenv()
 
 engine = create_engine(os.getenv('DATABASE_URL'))
 
+def enum_name_safe(enum_class, val):
+    if val is None or(isinstance(val,float) and np.isnan(val)):
+        return None
+    else:
+        enum_class(val.name)
+        
 def true_false_to_boolean(df, column):
     if df[column].dtype == 'int':
         df[column] = df[column].map({1:True, 0:False})
@@ -19,24 +25,6 @@ def true_false_to_boolean(df, column):
     print(df[column].dtype)
     return df
 
-def classification_map():
-    classification_map = {
-        0:"TRI",
-        1:"PBT",
-        2:"Dioxin"
-    }
-    return classification_map
-
-def metal_ind_map():
-    metal_ind_map = {
-        "0": "Not Metal",
-        "1": "Parent Metal",
-        "2": "Individually Listed Metal",
-        "3": "Barium",
-        "4": "Metal with Qualifiers"
-    }
-    return metal_ind_map
-
 def transform_tri_chem_info(raw_data):
     """
     Transforms the raw JSON data from the TRI chemical information table into a
@@ -45,8 +33,8 @@ def transform_tri_chem_info(raw_data):
     """
     try:
         df = pd.DataFrame(raw_data)
-        df['classification'] = df['classification'].apply(lambda x: classification_map().get(x))
-        df['metal_ind'] = df['metal_ind'].apply(lambda x: metal_ind_map().get(x))
+        df['classification'] = df['classification'].apply(lambda x: enum_name_safe(Classifications, x))
+        df['metal_ind'] = df['metal_ind'].apply(lambda x: enum_name_safe(Metal_Indicator, x))
         # Convert data types as needed, for example:
         df['tri_chem_id'] = df['tri_chem_id'].astype(str)
         df = true_false_to_boolean(df, 'caac_ind')
@@ -131,7 +119,7 @@ def transform_tri_form_total(raw_data):
         import traceback; traceback.print_exc();
         return None
 
-def tranform_main(table, start, end, loop_count, df =pd.DataFrame):
+def transform_main(table, start, end, loop_count, db_table, df =pd.DataFrame):
     try:
         temp = []
         for raw_data in be(table = table, start = start, end = end, increment=end, loop_count=loop_count):        
@@ -140,8 +128,8 @@ def tranform_main(table, start, end, loop_count, df =pd.DataFrame):
         result = [record for batch in temp for record in batch]    
         df = df(result)
         if df is not None:
-            print(df.tail())
-        df.to_sql(table = table[:-1], con=engine, if_exists='replace')
+            print("Success")
+        df.to_sql(name = db_table, con=engine, if_exists='append')
         
     except Exception as e:
         print(f"Error Occured during Transformation or Insertion{e}")
@@ -149,6 +137,8 @@ def tranform_main(table, start, end, loop_count, df =pd.DataFrame):
         
             
 if __name__ == "__main__":
-    tranform_main(table='tri_form_totals/', start = 1, end = 5, loop_count=1, df = transform_tri_form_total)
-            
+    transform_main(db_table='tri_chem_info',table='tri_chem_info/', start = 1, end = 100, loop_count=1,df = transform_tri_chem_info)
+    # transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 1, end = 100, loop_count=1, df=transform_tri_facility_history)
+    # transform_main(db_table='tri_form_total',table='tri_form_total/', start = 1, end = 1000, loop_count=10, df = transform_tri_form_total)
+    # transform_main(db_table='tri_chem_activity',table='tri_chem_activity/', start = 1, end = 100, loop_count=1, df = transform_tri_chem_activity)        
             
