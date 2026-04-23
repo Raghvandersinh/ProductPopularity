@@ -51,7 +51,7 @@ if __name__ == "__main__":
         Column('pfas_ind',BOOLEAN),
         Column('r3350_ind',BOOLEAN),
         Column('srs_id', VARCHAR(20)),
-        Column('units_of_measure', VARCHAR(10)),
+        Column('unit_of_measure', VARCHAR(10)),
         UniqueConstraint('tri_chem_id', 'srs_id')
     )
 

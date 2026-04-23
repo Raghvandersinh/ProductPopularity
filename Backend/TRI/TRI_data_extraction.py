@@ -69,7 +69,6 @@ def batch_extraction(table = 'tri_chem_info/',start = 1, end = 1000, increment =
         start += increment
         end += increment
         json_data = json.dumps(data, indent = 4)
-        print(type(data))
         yield data
         print(f"Batch {i+1} extracted successfully.")
         sleep(10) # Sleep for 30 seconds to avoid hitting API rate limits
