@@ -58,7 +58,7 @@ def get_data_json(base_url, table = None, range = None):
         print(f"Error has occurred: {e}")
         return None 
 
-def batch_extraction(table = 'tri_chem_info/',start = 1, end = 1000, increment = 1000, loop_count = 0):
+def batch_extraction(table = 'tri_chem_info/',start = 1, end = 5, increment = 5, loop_count = 0):
     """
     Extracts data in batches from the EPA DMP API to avoid hitting rate limits. 
     """
@@ -66,7 +66,7 @@ def batch_extraction(table = 'tri_chem_info/',start = 1, end = 1000, increment =
         string_range = f'{start}:{end}'
         base_url = url_filter(table = table, range=string_range)
         data = get_data_json(base_url)
-        start += increment
+        start = end
         end += increment
         json_data = json.dumps(data, indent = 4)
         yield data
