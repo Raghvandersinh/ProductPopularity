@@ -6,6 +6,10 @@ import os
 load_dotenv()
 
 
+engine = create_engine(os.getenv('DATABASE_URL'))
+meta = MetaData()
+
+
 class Classifications(enum.Enum):
     # TRI classifications
     TRI = 0
@@ -13,6 +17,7 @@ class Classifications(enum.Enum):
     PBT = 1
     # Dioxin classifications
     Dioxin = 2
+
 
 class Metal_Indicator(enum.Enum):
     # Chemical is NOT a Metal or Metal Compound
@@ -25,89 +30,87 @@ class Metal_Indicator(enum.Enum):
     Barium = '3'
     # Metals with Qualifiers
     Qualified_Metals = '4'
-    
-if __name__ == "__main__":
-    engine = create_engine(os.getenv('DATABASE_URL'))
 
-    try:
-        with engine.connect() as connection:
-            connection.execute(text('SELECT 1'))
-        print('connection successful')
-    except Exception as e:
+try:
+    with engine.connect() as connection:
+        connection.execute(text('SELECT 1'))
+    print('connection successful')
+except Exception as e:
         print(f'connection failed: {e}')
 
-    meta = MetaData()
+chem_info_table = Table(
+    'tri_chem_info',
+    meta,
+    Column('tri_chem_id', VARCHAR(15), primary_key=True),
+    Column('caac_ind', BOOLEAN),
+    Column('carc_ind', BOOLEAN),
+    Column('feds_ind', BOOLEAN),
+    Column('classification', Enum(Classifications, name='classification')),
+    Column('metal_ind', Enum(Metal_Indicator, name='metal_ind')),
+    Column('pbt_ind', BOOLEAN),
+    Column('pfas_ind', BOOLEAN),
+    Column('r3350_ind', BOOLEAN),
+    Column('srs_id', VARCHAR(20)),
+    Column('unit_of_measure', VARCHAR(10)),
+    UniqueConstraint('tri_chem_id', 'srs_id')
+)
 
-    chem_info_table = Table(
-        'tri_chem_info',
-        meta,
-        Column('tri_chem_id', VARCHAR(15), primary_key=True),
-        Column('caac_ind',BOOLEAN),
-        Column('carc_ind',BOOLEAN),
-        Column('feds_ind',BOOLEAN),
-        Column('classification', Enum(Classifications,name='classification')),
-        Column('metal_ind', Enum(Metal_Indicator,name='metal_ind')),
-        Column('pbt_ind',BOOLEAN),
-        Column('pfas_ind',BOOLEAN),
-        Column('r3350_ind',BOOLEAN),
-        Column('srs_id', VARCHAR(20)),
-        Column('unit_of_measure', VARCHAR(10)),
-        UniqueConstraint('tri_chem_id', 'srs_id')
-    )
+tri_chem_activity = Table(
+    'tri_chem_activity',
+    meta,
+    Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
+    Column('ancillary', BOOLEAN),
+    Column('article_component', BOOLEAN),
+    Column('byproduct', BOOLEAN),
+    Column('chem_processing_aid', BOOLEAN),
+    Column('formulation_component', BOOLEAN),
+    Column('imported', BOOLEAN),
+    Column('manufacture_aid', BOOLEAN),
+    Column('manufacture_impurity', BOOLEAN),
+    Column('process_impurity', BOOLEAN),
+    Column('produce', BOOLEAN),
+    Column('reactant', BOOLEAN),
+    Column('repackaging', BOOLEAN),
+    Column('sale_distribution', BOOLEAN),
+    Column('used_processed', BOOLEAN),
+    UniqueConstraint('doc_ctrl_num')
+)
 
-    tri_chem_activity = Table(
-        'tri_chem_activity',
-        meta,
-        Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
-        Column('ancillary',BOOLEAN),
-        Column('article_component',BOOLEAN),
-        Column('byproduct',BOOLEAN),
-        Column('chem_processing_aid',BOOLEAN),
-        Column('formulation_component',BOOLEAN),
-        Column('imported', BOOLEAN),
-        Column('manufacture_aid', BOOLEAN),
-        Column('manufacture_impurity' ,BOOLEAN),
-        Column('process_impurity' ,BOOLEAN),
-        Column('produce' ,BOOLEAN),
-        Column('reactant' ,BOOLEAN),
-        Column('repackaging' ,BOOLEAN),
-        Column('sale_distribution' ,BOOLEAN),
-        Column('used_processed' ,BOOLEAN),
-        UniqueConstraint('doc_ctrl_num')   
-    )
+tri_facility_history = Table(
+    'tri_facility_history',
+    meta,
+    Column('tri_facility_id', VARCHAR(15), nullable=False),
+    Column('create_date', DATETIME, nullable=False),
+    Column('parent_name', VARCHAR(20)),
+    Column('name', VARCHAR(30), nullable=False),
+    Column('city', VARCHAR(20)),
+    Column('county', VARCHAR(20)),
+    Column('state', VARCHAR(20)),
+    Column('epa_standardized_foreign_parent', VARCHAR(50)),
+    Column('epa_standardized_parent', VARCHAR(50)),
+    Column('primary_naics', VARCHAR(10)),
+    PrimaryKeyConstraint('tri_facility_id', 'create_date')
+)
 
-    tri_facility_history=  Table(
-        'tri_facility_history',
-        meta,
-        Column('tri_facility_id', VARCHAR(15), nullable=False),
-        Column('create_date', DATETIME, nullable = False),
-        Column('parent_name', VARCHAR(20)),
-        Column('name', VARCHAR(30), nullable=False),
-        Column('city', VARCHAR(20)),
-        Column('county', VARCHAR(20)),
-        Column('state', VARCHAR(20)),
-        Column('epa_standardized_foreign_parent', VARCHAR(50)),
-        Column('epa_standardized_parent', VARCHAR(50)),
-        Column('primary_naics', VARCHAR(10)),
-        PrimaryKeyConstraint('tri_facility_id', 'create_date')
-    );
+tri_form_total = Table(
+    'tri_form_total',
+    meta,
+    Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
+    Column('total_air_release', VARCHAR(10)),
+    Column('total_land_release', VARCHAR(10)),
+    Column('total_offsite_release', VARCHAR(10)),
+    Column('total_onsite_release', VARCHAR(10)),
+    Column('total_prod_waste', VARCHAR(10)),
+    Column('total_recovery_transfer', VARCHAR(10)),
+    Column('total_recycling_transfer', VARCHAR(10)),
+    Column('total_water_release', VARCHAR(10)),
+    Column('number_of_streams', VARCHAR(10)),
+    UniqueConstraint('doc_ctrl_num')
+)
 
-    tri_form_total = Table(
-        'tri_form_total',
-        meta,
-        Column('doc_ctrl_num', VARCHAR(13), primary_key=True),
-        Column('total_air_release', VARCHAR(10)),
-        Column('total_land_release', VARCHAR(10)),
-        Column('total_offsite_release', VARCHAR(10)),
-        Column('total_onsite_release', VARCHAR(10)),
-        Column('total_prod_waste', VARCHAR(10)),
-        Column('total_recovery_transfer', VARCHAR(10)),
-        Column('total_recycling_transfer', VARCHAR(10)),
-        Column('total_water_release', VARCHAR(10)),
-        Column('number_of_streams', VARCHAR(10)),
-        UniqueConstraint('doc_ctrl_num')
-    )
+meta.create_all(engine)
+conn = engine.connect()
 
-    meta.create_all(engine)
-    conn = engine.connect()
-
+table = meta.tables['tri_facility_history']
+for col in table.columns:
+    print(col.name, col.type, col.primary_key, col.nullable)
