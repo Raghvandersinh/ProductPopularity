@@ -4,7 +4,7 @@ import numpy as np
 from sqlalchemy import create_engine, text, inspect
 from dotenv import load_dotenv
 import os
-from TRI_table_creation import Classifications, Metal_Indicator
+from TRI_model import Classifications, Metal_Indicator
 load_dotenv()
 
 engine = create_engine(os.getenv('DATABASE_URL'))
