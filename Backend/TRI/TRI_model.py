@@ -62,8 +62,8 @@ class TriFacilityHistory(Base):
     __tablename__ = 'tri_facility_history'
     __table_args__ = (PrimaryKeyConstraint('tri_facility_id', 'create_date'), )
 
-    tri_facility_id = Column(String(15), nullable=False)
-    create_date = Column(DateTime, nullable=False)
+    tri_facility_id = Column(String(15), primary_key=True)
+    create_date = Column(DateTime, primary_key=True)
     parent_name = Column(String(20))
     name = Column(String(30), nullable=False)
     city = Column(String(20))

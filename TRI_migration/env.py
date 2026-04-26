@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config
+from sqlalchemy import engine_from_config, inspect
 from sqlalchemy import pool
 from alembic import context
 from dotenv import load_dotenv
@@ -77,7 +77,9 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection, target_metadata=target_metadata
         )
-
+        inspector = inspect(connection)
+        print("Existing Columns: ", inspector.get_columns('tri_facility_history'))
+        
         with context.begin_transaction():
             context.run_migrations()
 

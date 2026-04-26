@@ -1,15 +1,16 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,text
 from dotenv import load_dotenv
 import os
-from TRI_model import meta 
-
+from TRI_model import Base
+from sqlalchemy.orm import Session
 
 load_dotenv()
 engine = create_engine(os.getenv('DATABASE_URL'))
-conn = engine.connect()
 
-for connection in conn:
-    print()
-    
-meta.create_all(engine)
+with Session(engine) as session:
+    result = session.execute(text("Select 1;"))
+    for row in result:
+        print(row)
+
+Base.metadata.create_all(engine)
 
