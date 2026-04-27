@@ -4,6 +4,7 @@ from time import sleep
 from dotenv import load_dotenv
 import os
 import pandas as pd
+from pyspark.sql import SparkSession
 load_dotenv(override=True)
 
 
@@ -73,3 +74,16 @@ def batch_extraction(table = 'tri_chem_info/',start = 1, end = 5, increment = 5,
         print(f"Batch {i+1} extracted successfully.")
         sleep(10) # Sleep for 30 seconds to avoid hitting API rate limits
 
+def batch_extraction_spark(table = 'tri_chem_info/',start = 1, end = 5, batch = 5, loop_count = 0):
+    spark  = SparkSession.builder.appName('BatchProcessing').getOrCreate()
+    range = f'{start}:{end}'
+    base_url = url_filter(table = table, range = range )
+    data = get_data_json(base_url=base_url)
+    
+    df = pd.DataFrame(data)
+    df = df.fillna('')
+    
+    df_spark = spark.createDataFrame(df)
+    df_spark.show()
+    
+batch_extraction_spark()
