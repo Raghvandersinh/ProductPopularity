@@ -115,31 +115,29 @@ def transform_tri_form_total(raw_data):
         import traceback; traceback.print_exc();
         return None
 
-def transform_main(table, start, end, increment, loop_count, db_table, df =pd.DataFrame):
+def transform_main(table, start, end, increment, loop_count, db_table, df):
     try:
-        temp = []
-        for raw_data in be(table = table, start = start, end = end, increment=increment, loop_count=loop_count):        
-            temp.append(raw_data)
+        for i,raw_data in enumerate(be(table = table, start = start, end = end, increment=increment, loop_count=loop_count)):                    
+            
+            print(f"Length: {len(raw_data)}")           
+            df = pd.DataFrame(raw_data)
+            if df is not None:
+                print("Success")
         
-        result = [record for batch in temp for record in batch]    
-        df = df(result)
-        
-        if df is not None:
-            print("Success")
-        
-        inspector = inspect(engine)
-        table_col = [col['name'] for col in inspector.get_columns(db_table)]
-        df = df[table_col]
-        df.to_sql(name = db_table, con=engine, if_exists='replace', index=False)
-        
+            inspector = inspect(engine)
+            table_col = [col['name'] for col in inspector.get_columns(db_table)]
+            df = df[table_col]
+            if inspector.has_table(db_table):
+            
+                df.to_sql(name = db_table, con=engine, if_exists='append', index=False)
+
     except Exception as e:
         print(f"Error Occured during Transformation or Insertion{e}")
         import traceback; traceback.print_exc();
-        
-            
+                    
 if __name__ == "__main__":
-    transform_main(db_table='tri_chem_info',table='tri_chem_info/', start = 1, end = 1000, increment=0, loop_count=1,df = transform_tri_chem_info)
-    transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 0, end = 60000, increment=10000, loop_count=2, df=transform_tri_facility_history)
+    #transform_main(db_table='tri_chem_info',table='tri_chem_info/', start = 1, end = 1000, increment=0, loop_count=1,df = transform_tri_chem_info)
+    transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 0, end = 1000, increment=1000, loop_count=4, df=transform_tri_facility_history)
     # transform_main(db_table='tri_form_total',table='tri_form_total/', start = 1, end = 1000, loop_count=10, df = transform_tri_form_total)
     # transform_main(db_table='tri_chem_activity',table='tri_chem_activity/', start = 1, end = 100, loop_count=1, df = transform_tri_chem_activity)        
          

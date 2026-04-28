@@ -59,12 +59,13 @@ def get_data_json(base_url, table = None, range = None):
         print(f"Error has occurred: {e}")
         return None 
 
-def batch_extraction(table = 'tri_chem_info/',start = 1, end = 5, increment = 5, loop_count = 0):
+def batch_extraction(table = 'tri_chem_info/',start = 0, end = 5, increment = 5, loop_count = 0):
     """
     Extracts data in batches from the EPA DMP API to avoid hitting rate limits. 
     """
     for i in range(loop_count):
         string_range = f'{start}:{end}'
+        print(string_range)
         base_url = url_filter(table = table, range=string_range)
         data = get_data_json(base_url)
         start = end
@@ -72,7 +73,7 @@ def batch_extraction(table = 'tri_chem_info/',start = 1, end = 5, increment = 5,
         json_data = json.dumps(data, indent = 4)
         yield data
         print(f"Batch {i+1} extracted successfully.")
-        sleep(10) # Sleep for 30 seconds to avoid hitting API rate limits
+        sleep(30) # Sleep for 30 seconds to avoid hitting API rate limits
 
 def batch_extraction_spark(table = 'tri_chem_info/',start = 1, end = 5, batch = 5, loop_count = 0):
     spark  = SparkSession.builder.appName('BatchProcessing').getOrCreate()
@@ -86,4 +87,3 @@ def batch_extraction_spark(table = 'tri_chem_info/',start = 1, end = 5, batch = 
     df_spark = spark.createDataFrame(df)
     df_spark.show()
     
-batch_extraction_spark()
