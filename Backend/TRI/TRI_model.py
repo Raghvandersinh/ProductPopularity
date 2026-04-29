@@ -64,13 +64,13 @@ class TriFacilityHistory(Base):
 
     tri_facility_id = Column(String(15), primary_key=True)
     create_date = Column(DateTime, primary_key=True)
-    parent_name = Column(String(50))
-    name = Column(String(30), nullable=False)
+    parent_name = Column(String(100))
+    name = Column(String(100), nullable=False)
     city = Column(String(20))
     county = Column(String(20))
     state = Column(String(20))
-    epa_standardized_foreign_parent = Column(String(50))
-    epa_standardized_parent = Column(String(50))
+    epa_standardized_foreign_parent = Column(String(100))
+    epa_standardized_parent = Column(String(100))
     primary_naics = Column(String(10))
 
 

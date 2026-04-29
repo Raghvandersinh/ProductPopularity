@@ -162,6 +162,6 @@ def transform_main(table, start, end, increment, loop_count, db_table, df):
                     
 if __name__ == "__main__":
     #transform_main(db_table='tri_chem_info',table='tri_chem_info/', start = 1, end = 1000, increment=0, loop_count=1,df = transform_tri_chem_info)
-    transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 0, end = 10000, increment=10000, loop_count=10, df=transform_tri_facility_history)
+    transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 0, end = 10000, increment=10000, loop_count=1, df=transform_tri_facility_history)
     # transform_main(db_table='tri_form_total',table='tri_form_total/', start = 1, end = 1000, loop_count=10, df = transform_tri_form_total)
     # transform_main(db_table='tri_chem_activity',table='tri_chem_activity/', start = 1, end = 100, loop_count=1, df = transform_tri_chem_activity)        
