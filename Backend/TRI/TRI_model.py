@@ -64,7 +64,7 @@ class TriFacilityHistory(Base):
 
     tri_facility_id = Column(String(15), primary_key=True)
     create_date = Column(DateTime, primary_key=True)
-    parent_name = Column(String(20))
+    parent_name = Column(String(50))
     name = Column(String(30), nullable=False)
     city = Column(String(20))
     county = Column(String(20))
