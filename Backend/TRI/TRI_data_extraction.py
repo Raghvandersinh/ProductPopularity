@@ -63,6 +63,7 @@ def batch_extraction(table = 'tri_chem_info/',start = 0, end = 5, increment = 5,
     """
     Extracts data in batches from the EPA DMP API to avoid hitting rate limits. 
     """
+    
     for i in range(loop_count):
         string_range = f'{start}:{end}'
         print(string_range)
