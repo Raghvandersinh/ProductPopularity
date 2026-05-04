@@ -41,7 +41,7 @@ def url_filter(program = "tri",table = 'tri_chem_activity/', range = '1:20/', fo
         print("Error: Missing required parameters. Please provide program, table, and range.")
         return None
 
-def get_data_json(base_url, table = None, range = None):
+def get_data_json(base_url):
     """
     Fetches data from the provided URL and returns it as a JSON object.
     Keyword arguments:
@@ -61,7 +61,8 @@ def get_data_json(base_url, table = None, range = None):
 
 def batch_extraction(table = 'tri_chem_info/',start = 0, end = 5, increment = 5, loop_count = 0):
     """
-    Extracts data in batches from the EPA DMP API to avoid hitting rate limits. 
+    Extracts data in batches from the EPA DMP API then sleeps for 
+    30 seconds to avoid rate limits. 
     """
     
     for i in range(loop_count):
@@ -69,6 +70,7 @@ def batch_extraction(table = 'tri_chem_info/',start = 0, end = 5, increment = 5,
         print(string_range)
         base_url = url_filter(table = table, range=string_range)
         data = get_data_json(base_url)
+        print(len(data))
         start = end
         end += increment
         json_data = json.dumps(data, indent = 4)
