@@ -23,7 +23,7 @@ class TRIReportingForm(Base):
     __tablename__ = 'tri_reporting_form'
     
     doc_ctrl_num =  Column(String(13), primary_key=True)
-    tri_facility_id = Column(String(15), unique=True, nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
     tri_chem_id = Column(String(15), ForeignKey('tri_chem_info.tri_chem_id'))
 
 class TriChemInfo(Base):
@@ -66,7 +66,7 @@ class TriFacilityHistory(Base):
     __tablename__ = 'tri_facility_history'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tri_facility_id = Column(String(15), ForeignKey('tri_reporting_form.tri_facility_id'))
+    tri_facility_id = Column(String(15), nullable=False)
     create_date = Column(DateTime, nullable=False)
     parent_name = Column(String(100))
     name = Column(String(100), nullable=False)
@@ -96,7 +96,7 @@ class TriFormTotal(Base):
 class TRIFacilityDB(Base):
     __tablename__ = 'tri_facility_db'
     db_num = Column(String(15), primary_key=True)
-    tri_facility_id = Column(String(15), ForeignKey('tri_reporting_form.tri_facility_id'))
+    tri_facility_id = Column(String(15), nullable=False)
     
 class TRIFacilitynpdes(Base):
     # Permit a facility has to discharge chemical in specific bodies of water
@@ -105,7 +105,7 @@ class TRIFacilitynpdes(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_npdes_ind = Column(Boolean)
     npdes_num = Column(String(15))
-    tri_facility_id = Column(String(15), ForeignKey('tri_reporting_form.tri_facility_id'))
+    tri_facility_id = Column(String(15), nullable=False)
 
 class TRIFacilityRCRA(Base):
     #ID number given to facility that manages Regulated Hazardous Waste.
@@ -114,7 +114,7 @@ class TRIFacilityRCRA(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_rcra_ind = Column(Boolean)
     rcra_num = Column(String(20))
-    tri_facility_id = Column(String(15), ForeignKey('tri_reporting_form.tri_facility_id'))
+    tri_facility_id = Column(String(15), nullable=False)
 
 class TRIFacilityUIC(Base):
     # ID number for each Underground injection Well a facility has
@@ -125,5 +125,5 @@ class TRIFacilityUIC(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_uic_ind = Column(Boolean)
     uic_num = Column(String(20))
-    tri_facility_id = Column(String(15), ForeignKey('tri_reporting_form.tri_facility_id'))
+    tri_facility_id = Column(String(15), nullable=False)
 
