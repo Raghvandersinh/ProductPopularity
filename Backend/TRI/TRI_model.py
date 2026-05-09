@@ -1,5 +1,5 @@
 import enum
-from sqlalchemy import Column, Boolean, String, Integer, DateTime, Enum, UniqueConstraint, PrimaryKeyConstraint, ForeignKey
+from sqlalchemy import Column, Boolean, String, Integer, DateTime, Enum, UniqueConstraint, PrimaryKeyConstraint, ForeignKey, Text
 from sqlalchemy.orm import declarative_base
 
 # Base class for ORM
@@ -127,3 +127,18 @@ class TRIFacilityUIC(Base):
     uic_num = Column(String(20))
     tri_facility_id = Column(String(15), nullable=False)
 
+class TRISubmissionNAICS(Base):
+    __tablename__ = 'tri_submission_naics'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    tri_facility_id = Column(String(15), nullable=False)
+    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'))
+    naics_code = Column(String(6))
+    industry_code = Column(String(6))
+    source = Column(String(10))
+    
+class NAICSCodes(Base):
+    __tablename__ = 'naics_code'
+    naics_code = Column(String(10), primary_key=True)
+    name = Column(String)
+    type = Column(String)
+    

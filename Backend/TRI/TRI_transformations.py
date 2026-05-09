@@ -21,7 +21,6 @@ def true_false_to_boolean(df, column):
         Returns:
             updated DataFrame column with the boolean values  
     '''
-    print(df.columns.tolist())
     if df[column].dtype == 'int':
         df[column] = df[column].map({1:True, 0:False})
     elif df[column].dtype == 'str':
@@ -232,6 +231,13 @@ def transform_tri_reporting_form(raw_data):
         import traceback; traceback.print_exc();
         return None
     
+def insert_naics_codes():
+    df = pd.read_excel('Backend/TRI/naics_codes.xlsx')
+    df = df.iloc[:, [1,2]]
+    df = df.dropna()
+    df = df.rename(columns={df.columns[0]:'naics_code', df.columns[1]:'name'})
+    print(df.columns.to_list())
+
 def get_table_object(table_name):
     """
     Gets our table information from the existing DataBase
@@ -325,9 +331,10 @@ if __name__ == "__main__":
     #transform_main(db_table='tri_reporting_form',table='tri_reporting_form/', start = 3000000, end = 3050000, increment=50000, loop_count=10, df = transform_tri_reporting_form)
     #transform_main(db_table='tri_chem_info',table='tri_chem_info/', start = 0, end = 1000, increment=0, loop_count=1,df = transform_tri_chem_info)
     #transform_main(db_table='tri_facility_history',table = 'tri_facility_history_2/', start = 0, end = 50000, increment=50000, loop_count=60, df=transform_tri_facility_history)
-    transform_main(db_table='tri_form_total',table='tri_form_totals/', start = 0, end = 50000,increment=50000, loop_count=50, df = transform_tri_form_total)
-    #transform_main(db_table='tri_chem_activity',table='tri_chem_activity/', start = 2950000, end = 3000000, increment=50000 ,loop_count=30, df = transform_tri_chem_activity)        
-    #transform_main(db_table = 'tri_facility_db', table='tri_facility_db/', start = 0, end = 50000, increment = 50000, loop_count = 10, df = transform_tri_facility_db)
+    #transform_main(db_table='tri_form_total',table='tri_form_totals/', start = 2500000, end = 2550000,increment=50000, loop_count=50, df = transform_tri_form_total)
+    #transform_main(db_table='tri_chem_activity',table='tri_chem_activity/', start = 3200000, end = 3250000, increment=50000 ,loop_count=30, df = transform_tri_chem_activity)        
+    #transform_main(db_table = 'tri_facility_db', table='tri_facility_db/', start = 0, end = 50000, increment = 50000, loop_count = 20, df = transform_tri_facility_db)
     #transform_main(db_table = 'tri_facility_npdes', table='tri_facility_npdes/', start = 0, end = 50000, increment=50000, loop_count= 1, df = transform_tri_facility_npdes)
     #transform_main(db_table = 'tri_facility_rcra', table = 'tri_facility_rcra/', start = 0, end = 50000, increment = 50000, loop_count=1, df = transform_tri_facility_rcra)
     #transform_main(db_table = 'tri_facility_uic', table = 'tri_facility_uic/', start = 0, end = 50000, increment = 50000, loop_count=1, df = transform_tri_facility_uic)
+    insert_naics_codes()
