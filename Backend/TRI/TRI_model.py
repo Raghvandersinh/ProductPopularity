@@ -24,8 +24,8 @@ class TRIReportingForm(Base):
     
     doc_ctrl_num =  Column(String(13), primary_key=True)
     tri_facility_id = Column(String(15), nullable=False, index=True)
-    tri_chem_id = Column(String(15), ForeignKey('tri_chem_info.tri_chem_id'))
-
+    tri_chem_id = Column(String(15), ForeignKey('tri_chem_info.tri_chem_id'), index=True)
+    reporting_year = Column(Integer)
 class TriChemInfo(Base):
     __tablename__ = 'tri_chem_info'
     tri_chem_id = Column(String(15), primary_key=True)
@@ -45,7 +45,7 @@ class TriChemActivity(Base):
     __tablename__ = 'tri_chem_activity'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'))
+    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'), index=True)
     ancillary = Column(Boolean)
     article_component = Column(Boolean)
     byproduct = Column(Boolean)
@@ -66,7 +66,7 @@ class TriFacilityHistory(Base):
     __tablename__ = 'tri_facility_history'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tri_facility_id = Column(String(15), nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
     create_date = Column(DateTime, nullable=False)
     parent_name = Column(String(100))
     name = Column(String(100), nullable=False)
@@ -76,13 +76,13 @@ class TriFacilityHistory(Base):
     epa_standardized_foreign_parent = Column(String(100))
     epa_standardized_parent = Column(String(100))
     primary_naics = Column(String(10))
-
+    reporting_year = Column(Integer)
 
 class TriFormTotal(Base):
     __tablename__ = 'tri_form_total'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'))
+    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'), index=True)
     total_air_release = Column(String(50))
     total_land_release = Column(String(50))
     total_offsite_release = Column(String(50))
@@ -96,7 +96,7 @@ class TriFormTotal(Base):
 class TRIFacilityDB(Base):
     __tablename__ = 'tri_facility_db'
     db_num = Column(String(15), primary_key=True)
-    tri_facility_id = Column(String(15), nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
     
 class TRIFacilitynpdes(Base):
     # Permit a facility has to discharge chemical in specific bodies of water
@@ -105,7 +105,7 @@ class TRIFacilitynpdes(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_npdes_ind = Column(Boolean)
     npdes_num = Column(String(15))
-    tri_facility_id = Column(String(15), nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
 
 class TRIFacilityRCRA(Base):
     #ID number given to facility that manages Regulated Hazardous Waste.
@@ -114,7 +114,7 @@ class TRIFacilityRCRA(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_rcra_ind = Column(Boolean)
     rcra_num = Column(String(20))
-    tri_facility_id = Column(String(15), nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
 
 class TRIFacilityUIC(Base):
     # ID number for each Underground injection Well a facility has
@@ -125,13 +125,13 @@ class TRIFacilityUIC(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     asgn_uic_ind = Column(Boolean)
     uic_num = Column(String(20))
-    tri_facility_id = Column(String(15), nullable=False)
+    tri_facility_id = Column(String(15), nullable=False, index=True)
 
 class TRISubmissionNAICS(Base):
     __tablename__ = 'tri_submission_naics'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    tri_facility_id = Column(String(15), nullable=False)
-    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'))
+    tri_facility_id = Column(String(15), nullable=False, index=True)
+    doc_ctrl_num = Column(String(13), ForeignKey('tri_reporting_form.doc_ctrl_num'), index=True)
     naics_code = Column(String(6))
     industry_code = Column(String(6))
     source = Column(String(10))
