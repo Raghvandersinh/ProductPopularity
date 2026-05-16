@@ -3,7 +3,8 @@
 ## A fully functional project written in Python that creates a TRI  Database Model and a Data Extraction Pipeline to insert clean data into the TRI database for further Analysis.
 
 This goal of this project is answer questions such as:
-
+* What are the Top 10 Facility Released The Most Toxic Waste Throughout the Years?
+    ![alt text](Frontend/chart/total_waste_throughout.png)
 * What state has the most toxic relased?
 * What state has the most dangerous toxic?
 * To Be Continued...
