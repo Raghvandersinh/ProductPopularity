@@ -1,13 +1,16 @@
 import altair as alt
+from vega_datasets import data
 import pandas as pd 
 from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import time
 import os 
 import json
+import us
+
+start_time = time.time()
 
 alt.renderers.enable("mimetype")
-start_time = time.time()
 
 load_dotenv()
 
@@ -55,5 +58,86 @@ def total_waste_througout_from_top_10_facility_chart_generator():
 
     total_waste_throughout_top_10_chart.save('Frontend/total_waste_throughout_top_10.png')
 
-    end_time = time.time()
-    print(f"Runtime {end_time - start_time} Seconds.")
+
+
+def total_waste_by_location_throughout_or_After_2020(choice = ""):
+    if choice == 'After':
+        total_waste_df = pd.read_sql(queries['Waste_By_Location_2020s'], con=engine) 
+    else:
+        total_waste_df = pd.read_sql(queries["Waste_By_Location"], con=engine)
+
+    
+    print("Sample of data:")
+    print(total_waste_df[['state', 'county']].head(10))
+    print(f"\nTotal rows: {len(total_waste_df)}")
+    
+    print(total_waste_df.head(10))    
+    states  = alt.topo_feature(data.us_10m.url, feature = 'states')
+    state_waste = total_waste_df.groupby('state', as_index=False)['total_release'].sum()
+    
+    # Use the us library to get state names and map IDs
+    def get_state_info(abbrev):
+        state = us.states.lookup(abbrev)
+        if state:
+            return pd.Series({
+                'state_name': state.name,
+                # The topo feature uses the FIPS code as the ID (but as string without leading zero for single digits)
+                'id': int(state.fips)  # Convert FIPS to int to match topo feature format
+            })
+        return pd.Series({'state_name': abbrev, 'id': None})
+    
+    # Apply the mapping
+    state_info = state_waste['state'].apply(get_state_info)
+    state_waste = pd.concat([state_waste, state_info], axis=1)
+    
+    # Check for unmapped states
+    unmapped = state_waste[state_waste['id'].isna()]
+    if len(unmapped) > 0:
+        print(f"Warning: Could not map IDs for states: {unmapped['state'].tolist()}")
+        # Remove unmapped states
+        state_waste = state_waste.dropna(subset=['id'])
+    
+    # Convert id to integer for proper matching
+    state_waste['id'] = state_waste['id'].astype(int)
+    
+    background = alt.Chart(states).mark_geoshape(
+        fill = 'lightgray',
+        stroke = 'white'
+    ).project('albersUsa').properties(
+        width = 700,
+        height = 500
+    )
+    
+    waste_map = alt.Chart(states).mark_geoshape(
+        stroke = 'white'
+    ).project(
+        'albersUsa'
+    ).encode(
+        color = alt.Color('total_release:Q',
+                          scale = alt.Scale(scheme = 'reds', type = 'log'),
+                          title='Total Waste Released'),
+        tooltip=[
+            alt.Tooltip('state_name:N', title='State'),
+            alt.Tooltip('total_release:Q', title='Total Waste', format=',.0f')
+        ]
+    ).transform_lookup(
+        lookup = 'id',
+        from_=alt.LookupData(state_waste, 'id', ['total_release', 'state_name'])
+    ).properties(
+        width = 700,
+        height=500,
+        title = 'Waste Release By State'
+    )
+    
+    chart = background + waste_map
+    if choice == 'After':
+        chart.save('Frontend/chart/total_waste_By_States_2020s.png')
+    else:
+        chart.save('Frontend/chart/total_waste_By_States.png')
+    
+    return chart
+# Run it
+total_waste_by_location_throughout_or_After_2020()
+
+end_time = time.time()
+print(f"Runtime {end_time - start_time} Seconds.")

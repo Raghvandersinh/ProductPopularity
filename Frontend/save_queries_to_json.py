@@ -43,7 +43,7 @@ queries = {
     GROUP BY rt.tri_facility_id
     ORDER BY Total_Release DESC LIMIT 10;
     """,
-    "Top_10_Facility_Waster_2020":
+    "Waste_By_Location":
     """
     WITH release_totals AS (
         SELECT 
@@ -94,6 +94,24 @@ queries = {
         JOIN release_totals rt ON tfh.tri_facility_id = rt.tri_facility_id
         GROUP BY t10.name, DATE_TRUNC('month', tfh.create_date)
         ORDER BY create_month, name;
+    """,
+    "Waste_By_Location_2020s": 
+    """
+        WITH reports_after_2020 AS(
+            Select trf.doc_ctrl_num, tfh.city, tfh.county, tfh.state
+            FROM tri_reporting_form trf
+            JOIN tri_facility_history tfh ON trf.tri_facility_id = tfh.tri_facility_id
+            Where tfh.create_date >= '2020-01-01'
+        )
+        Select
+        ra.city,
+        ra.county,
+        ra.state,
+        ROUND(SUM(tft.total_offsite_release::NUMERIC + tft.total_onsite_release::NUMERIC)) AS Total_Waste
+        FROM reports_after_2020 ra 
+        JOIN tri_form_total tft ON ra.doc_ctrl_num = tft.doc_ctrl_num
+        GROUP BY ra.state,ra.county,ra.city
+        Order By Total_Waste DESC;
     """
 }
 
