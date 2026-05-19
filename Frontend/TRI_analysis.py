@@ -6,7 +6,10 @@ from dotenv import load_dotenv
 import time
 import os 
 import json
-import us
+from us import states
+import requests
+from io import StringIO
+from census import Census
 
 start_time = time.time()
 
@@ -59,7 +62,6 @@ def total_waste_througout_from_top_10_facility_chart_generator():
     total_waste_throughout_top_10_chart.save('Frontend/total_waste_throughout_top_10.png')
 
 
-
 def total_waste_by_location_throughout_or_After_2020(choice = ""):
     if choice == 'After':
         total_waste_df = pd.read_sql(queries['Waste_By_Location_2020s'], con=engine) 
@@ -74,10 +76,10 @@ def total_waste_by_location_throughout_or_After_2020(choice = ""):
     print(total_waste_df.head(10))    
     states  = alt.topo_feature(data.us_10m.url, feature = 'states')
     state_waste = total_waste_df.groupby('state', as_index=False)['total_release'].sum()
-    
+    print('\nState Waste:', state_waste.head())
     # Use the us library to get state names and map IDs
     def get_state_info(abbrev):
-        state = us.states.lookup(abbrev)
+        state = states.lookup(abbrev)
         if state:
             return pd.Series({
                 'state_name': state.name,
@@ -88,8 +90,10 @@ def total_waste_by_location_throughout_or_After_2020(choice = ""):
     
     # Apply the mapping
     state_info = state_waste['state'].apply(get_state_info)
+    print(f'\nState Info: {state_info}')
     state_waste = pd.concat([state_waste, state_info], axis=1)
-    
+    print(f'\nState Waste Updated: {state_waste}')
+
     # Check for unmapped states
     unmapped = state_waste[state_waste['id'].isna()]
     if len(unmapped) > 0:
@@ -115,7 +119,7 @@ def total_waste_by_location_throughout_or_After_2020(choice = ""):
     ).encode(
         color = alt.Color('total_release:Q',
                           scale = alt.Scale(scheme = 'reds', type = 'log'),
-                          title='Total Waste Released'),
+                          title='Total Waste Released' if choice != 'After' else 'Total Waste Released 2020s'),
         tooltip=[
             alt.Tooltip('state_name:N', title='State'),
             alt.Tooltip('total_release:Q', title='Total Waste', format=',.0f')
@@ -126,7 +130,7 @@ def total_waste_by_location_throughout_or_After_2020(choice = ""):
     ).properties(
         width = 700,
         height=500,
-        title = 'Waste Release By State'
+        title = 'Waste Release By State' if choice != 'After' else "Waste Release By State 2020s"
     )
     
     chart = background + waste_map
@@ -136,8 +140,40 @@ def total_waste_by_location_throughout_or_After_2020(choice = ""):
         chart.save('Frontend/chart/total_waste_By_States.png')
     
     return chart
-# Run it
-total_waste_by_location_throughout_or_After_2020()
 
+def total_waste_by_counties_throughout_or_After_2020(choice = ""):
+    if choice == 'After':
+        total_waste_df = pd.read_sql(queries['Waste_By_Location_2020s'], con=engine) 
+    else:
+        total_waste_df = pd.read_sql(queries["Waste_By_Location"], con=engine)
+
+    counties = alt.topo_feature(data.us_10m.url, feature = 'counties')
+    counties_waste = total_waste_df.groupby('county', as_index=False)['total_release'].sum()
+    
+    background = alt.Chart(counties).mark_geoshape(
+        fill = 'lightgray',
+        stroke = 'white'
+    ).project('albersUsa').properties(
+        width = 700,
+        height = 500
+    )
+    
+    background.save('County.png')
+    
+
+
+def map_db_counties_to_fips_code():
+    location_db = pd.read_sql(queries['Waste_By_Location'], con=engine)
+    def safe_state_lookup(abbr):
+        result = states.lookup(abbr)
+        return result.name if result is not None else pd.NA 
+    location_db['state_name'] = location_db['state'].apply(safe_state_lookup)
+    
+    
+    
+# Run it
+#total_waste_by_location_throughout_or_After_2020(choice = 'After')
+#total_waste_by_counties_throughout_or_After_2020()
+map_db_counties_to_fips_code()
 end_time = time.time()
 print(f"Runtime {end_time - start_time} Seconds.")

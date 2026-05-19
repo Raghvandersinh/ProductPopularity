@@ -107,11 +107,11 @@ queries = {
         ra.city,
         ra.county,
         ra.state,
-        ROUND(SUM(tft.total_offsite_release::NUMERIC + tft.total_onsite_release::NUMERIC)) AS Total_Waste
+        ROUND(SUM(tft.total_offsite_release::NUMERIC + tft.total_onsite_release::NUMERIC)) AS total_release
         FROM reports_after_2020 ra 
         JOIN tri_form_total tft ON ra.doc_ctrl_num = tft.doc_ctrl_num
         GROUP BY ra.state,ra.county,ra.city
-        Order By Total_Waste DESC;
+        Order By total_release DESC;
     """
 }
 
